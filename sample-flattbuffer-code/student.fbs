@@ -1,0 +1,9 @@
+namespace Person.Scholar;
+table Student{
+    name: string;
+    student_no: string;
+    dob: string;
+    courses: [string];
+}
+
+root_type Student;
