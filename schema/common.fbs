@@ -1,0 +1,16 @@
+namespace workpackage.common;
+
+table Matrix2D {
+  n_rows:int;
+  n_cols:int;
+  elements:[float];
+}
+
+table Matrix3D {
+  num_rows:int;
+  num_cols:int;
+  num_pages:int;
+  elements:[float];
+}
+
+union Matrix {Matrix2D, Matrix3D}

@@ -1,0 +1,3 @@
+# We don't want to add the generated C++ and Python flatbuffer code to git version control.
+# The main artifacts here are the actual .fbs files.
+generated/

@@ -1,0 +1,13 @@
+include "common.fbs";
+
+namespace workpackage.response;
+
+table ScalarResponse {
+    response:float;
+}
+
+table MatrixResponse {
+    response: common.Matrix;
+}
+
+union Reponse {ScalarResponse, MatrixResponse}
