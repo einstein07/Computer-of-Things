@@ -13,4 +13,10 @@ table Matrix3D {
   elements:[float];
 }
 
-union Matrix {Matrix2D, Matrix3D}
+table MatrixND {
+  num_dims:int;
+  dim_sizes:[int];
+  elements:[float];
+}
+
+union Matrix {Matrix2D, Matrix3D, MatrixND}
