@@ -1,0 +1,24 @@
+// WorkPackage IDL file
+
+include "request.fbs";
+include "response.fbs";
+
+namespace workpackage;
+
+enum Operation : byte { 
+    ADD = 0, 
+    SUBTRACT, 
+    MULTIPLY,
+}
+
+table OperationRequest {
+    id:long;
+    op_type:Operation;
+    request:request.Request;
+}
+
+table OperationResponse {
+    id:long;
+    op_type:Operation;
+    response:response.Reponse;
+}

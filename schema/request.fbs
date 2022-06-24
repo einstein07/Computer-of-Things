@@ -1,0 +1,22 @@
+include "common.fbs";
+
+namespace workpackage.request;
+
+// A bivariate function is a function that takes two inputs and produces an output.
+// BivariateScalarRequest represents a function that takes two scalar inputs.
+table BivariateScalarRequest  {
+    a: float;
+    b: float;
+}
+
+// A bivariate function is a function that takes two inputs and produces an output.
+// BivariateMatrixRequest represents a function that takes two matrix inputs.
+table BivariateMatrixRequest {
+    a: common.Matrix;
+    b: common.Matrix;
+}
+
+union Request {
+    BivariateScalarRequest,
+    BivariateMatrixRequest,
+}
