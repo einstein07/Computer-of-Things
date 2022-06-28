@@ -1,4 +1,5 @@
 #include "include/ComputerOfThings.h"
+#include <iostream>
 using namespace workpackage;
 using namespace workpackage::response;
 using namespace workpackage::common;
@@ -11,15 +12,20 @@ float subtract(float arg1, float arg2){
     return arg1 - arg2;
 }
 
-std::vector<flatbuffers::Offset<float>> mult(const workpackage::common::Matrix2D* a, const workpackage::common::Matrix2D* b){
-    std::vector<flatbuffers::Offset<float>> elem;
-    //flatbuffers::Offset<flatbuffers::Vector<float>> elements;
+float mult(float arg1, float arg2){
+    return arg1 * arg2;
+}
+
+std::vector<float> mult(const workpackage::common::Matrix2D* a, const workpackage::common::Matrix2D* b){
+    std::vector<float> elem;
     float result[a -> n_rows()][a -> n_cols()];
     for (unsigned int i = 1; i <= a -> n_rows(); i++){
         for (unsigned int j = 1; j <= b -> n_cols(); j++){
             float sum = 0.0f;
             for (unsigned int k = 1; k <= b -> n_rows(); k++){
-                sum += a ->elements() -> Get((k-1) * a -> n_rows() + i) * b ->elements() -> Get((j-1) * b -> n_rows() + k);
+                int index_a = (k-1) * a -> n_rows() + i;
+                int index_b = (j-1) * b -> n_rows() + k;
+                sum += a ->elements() -> Get(index_a-1) * b ->elements() -> Get(index_b-1);
             }
             elem.push_back(sum);
         }
@@ -28,32 +34,35 @@ std::vector<flatbuffers::Offset<float>> mult(const workpackage::common::Matrix2D
 }
 
 
-uint8_t* process_work_packages(OperationRequest* request){
-    requestId_ = request -> id();
-    operation_ = request -> op_type();
+const OperationResponse* process_work_packages(const OperationRequest* request_){
+    long requestId_ = request_ -> id();
+    Operation operation_ = request_ -> op_type();
     float responseValue = 0.0f;
-    std::vector<flatbuffers::Offset<float>> elem;
+    std::vector<float> elem;
     if (operation_ == Operation_ADD ){
-        responseValue = add(request -> request_as_BivariateScalarRequest() -> a(), request -> request_as_BivariateScalarRequest() -> b());
+        responseValue = add(request_ -> request_as_BivariateScalarRequest() -> a(), request_ -> request_as_BivariateScalarRequest() -> b());
     }
     else if (operation_ == Operation_SUBTRACT){
-        responseValue = subtract(request -> request_as_BivariateScalarRequest() -> a(), request -> request_as_BivariateScalarRequest() -> b());
+        responseValue = subtract(request_ -> request_as_BivariateScalarRequest() -> a(), request_ -> request_as_BivariateScalarRequest() -> b());
     }
     else{
-        elem =  mult (request -> request_as_BivariateMatrixRequest() -> a_as_Matrix2D(), request -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D());
+        elem =  mult (request_ -> request_as_BivariateMatrixRequest() -> a_as_Matrix2D(), request_ -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D());
     }
     	
     flatbuffers::FlatBufferBuilder builder(1024);
     if (operation_ == Operation_MULTIPLY){
+        std::cout << "Elem size: " << elem.size() << std::endl;
         auto elements = builder.CreateVector(elem);
         auto matrixResponse = CreateMatrixResponse(builder, Matrix::Matrix_Matrix2D, elements.Union());
-        auto response = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_MatrixResponse , matrixResponse.Union());
-        return  builder.GetBufferPointer();
+        auto response_ = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_MatrixResponse , matrixResponse.Union());
+        builder.Finish(response_);
+        return flatbuffers::GetRoot<workpackage::OperationResponse>(builder.GetBufferPointer());
     }
     else{
         auto scalarResponse = CreateScalarResponse(builder, responseValue);
-        auto response = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_ScalarResponse , scalarResponse.Union());
-        return  builder.GetBufferPointer();
+        auto response_ = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_ScalarResponse , scalarResponse.Union());
+        builder.Finish(response_);
+        return flatbuffers::GetRoot<workpackage::OperationResponse>(builder.GetBufferPointer());
     }
     
 }
