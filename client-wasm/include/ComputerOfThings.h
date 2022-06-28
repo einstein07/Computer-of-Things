@@ -4,12 +4,10 @@
 #include "workpackage_generated.h"
 #include "request_generated.h"
 
-        long requestId_;
-        workpackage::Operation operation_;
-
         float add(float arg1, float arg2);
         float subtract(float arg1, float arg2);
-        std::vector<flatbuffers::Offset<float>> mult(const workpackage::common::Matrix2D* a, const workpackage::common::Matrix2D* b);
-        uint8_t* process_work_packages(workpackage::OperationRequest* request);
+        float mult(float arg1, float arg2);
+        std::vector<float> mult(const workpackage::common::Matrix2D* a, const workpackage::common::Matrix2D* b);
+        const workpackage::OperationResponse* process_work_packages(const workpackage::OperationRequest* request_);
 
 #endif
