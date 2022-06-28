@@ -1,4 +1,4 @@
-# computer-of-things 🖥️📱💡🖨️📡
+# Computer-of-Things 🖥️📱💡🖨️📡
 
 Computer Of Things (CoThings) is a project aimed at creating a distributed processing framework, utilizing the portability of [WebAssembly](https://webassembly.org/) (WASM). 
 
