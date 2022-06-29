@@ -44,10 +44,11 @@ std::vector<float> mult(const workpackage::common::Matrix2D* a, const workpackag
         for (unsigned int j = 1; j <= b -> n_cols(); j++){
             float sum = 0.0f;
             for (unsigned int k = 1; k <= b -> n_rows(); k++){
-                int index_a = (k-1) * a -> n_rows() + i;
-                int index_b = (j-1) * b -> n_rows() + k;
+                int index_b = (k-1) * a -> n_rows() + i;
+                int index_a = (j-1) * b -> n_rows() + k;
                 sum += a ->elements() -> Get(index_a-1) * b ->elements() -> Get(index_b-1);
             }
+            
             elem.push_back(sum);
         }
     }
@@ -89,7 +90,8 @@ const OperationResponse* process_work_packages(const OperationRequest* request_)
     }
     else{
         auto elements = builder.CreateVector(elem);
-        auto matrixResponse = CreateMatrixResponse(builder, Matrix::Matrix_Matrix2D, elements.Union());
+        auto matrix2D = CreateMatrix2D(builder, 2, 2, elements);
+        auto matrixResponse = CreateMatrixResponse(builder, Matrix::Matrix_Matrix2D, matrix2D.Union());
         auto response_ = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_MatrixResponse , matrixResponse.Union());
         builder.Finish(response_);
         return flatbuffers::GetRoot<workpackage::OperationResponse>(builder.GetBufferPointer());
