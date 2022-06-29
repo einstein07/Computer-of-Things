@@ -22,11 +22,11 @@
 #include <memory>
 #include <stack>
 
-#include "flatbuffers/base.h"
-#include "flatbuffers/flatbuffers.h"
-#include "flatbuffers/flexbuffers.h"
-#include "flatbuffers/hash.h"
-#include "flatbuffers/reflection.h"
+#include "base.h"
+#include "flatbuffers.h"
+#include "flexbuffers.h"
+#include "hash.h"
+#include "reflection.h"
 
 // This file defines the data types representing a parsed IDL (Interface
 // Definition Language) / schema file.

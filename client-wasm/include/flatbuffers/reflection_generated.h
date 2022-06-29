@@ -4,7 +4,7 @@
 #ifndef FLATBUFFERS_GENERATED_REFLECTION_REFLECTION_H_
 #define FLATBUFFERS_GENERATED_REFLECTION_REFLECTION_H_
 
-#include "flatbuffers/flatbuffers.h"
+#include "flatbuffers.h"
 
 // Ensure the included flatbuffers.h is the same version as when this file was
 // generated, otherwise it may not be compatible.

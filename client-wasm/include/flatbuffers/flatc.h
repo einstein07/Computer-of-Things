@@ -21,10 +21,10 @@
 #include <limits>
 #include <string>
 
-#include "flatbuffers/bfbs_generator.h"
-#include "flatbuffers/flatbuffers.h"
-#include "flatbuffers/idl.h"
-#include "flatbuffers/util.h"
+#include "bfbs_generator.h"
+#include "flatbuffers.h"
+#include "idl.h"
+#include "util.h"
 
 namespace flatbuffers {
 

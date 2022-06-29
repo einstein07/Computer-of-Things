@@ -19,19 +19,19 @@
 
 // TODO: These includes are for mitigating the pains of users editing their
 // source because they relied on flatbuffers.h to include everything for them.
-#include "flatbuffers/array.h"
-#include "flatbuffers/base.h"
-#include "flatbuffers/buffer.h"
-#include "flatbuffers/buffer_ref.h"
-#include "flatbuffers/detached_buffer.h"
-#include "flatbuffers/flatbuffer_builder.h"
-#include "flatbuffers/stl_emulation.h"
-#include "flatbuffers/string.h"
-#include "flatbuffers/struct.h"
-#include "flatbuffers/table.h"
-#include "flatbuffers/vector.h"
-#include "flatbuffers/vector_downward.h"
-#include "flatbuffers/verifier.h"
+#include "array.h"
+#include "base.h"
+#include "buffer.h"
+#include "buffer_ref.h"
+#include "detached_buffer.h"
+#include "flatbuffer_builder.h"
+#include "stl_emulation.h"
+#include "string.h"
+#include "struct.h"
+#include "table.h"
+#include "vector.h"
+#include "vector_downward.h"
+#include "verifier.h"
 
 namespace flatbuffers {
 

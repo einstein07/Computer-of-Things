@@ -17,9 +17,9 @@
 #ifndef FLATBUFFERS_ARRAY_H_
 #define FLATBUFFERS_ARRAY_H_
 
-#include "flatbuffers/base.h"
-#include "flatbuffers/stl_emulation.h"
-#include "flatbuffers/vector.h"
+#include "base.h"
+#include "stl_emulation.h"
+#include "vector.h"
 
 namespace flatbuffers {
 

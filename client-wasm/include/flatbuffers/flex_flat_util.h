@@ -17,8 +17,8 @@
 #ifndef FLATBUFFERS_FLEX_FLAT_UTIL_H_
 #define FLATBUFFERS_FLEX_FLAT_UTIL_H_
 
-#include "flatbuffers/flatbuffers.h"
-#include "flatbuffers/flexbuffers.h"
+#include "flatbuffers.h"
+#include "flexbuffers.h"
 
 namespace flexbuffers {
 

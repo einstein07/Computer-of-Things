@@ -18,7 +18,7 @@
 #define FLATBUFFERS_STL_EMULATION_H_
 
 // clang-format off
-#include "flatbuffers/base.h"
+#include "base.h"
 
 #include <string>
 #include <type_traits>

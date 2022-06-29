@@ -17,8 +17,8 @@
 #ifndef FLATBUFFERS_STRING_H_
 #define FLATBUFFERS_STRING_H_
 
-#include "flatbuffers/base.h"
-#include "flatbuffers/vector.h"
+#include "base.h"
+#include "vector.h"
 
 namespace flatbuffers {
 

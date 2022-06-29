@@ -20,8 +20,8 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include "flatbuffers/base.h"
-#include "flatbuffers/stl_emulation.h"
+#include "base.h"
+#include "stl_emulation.h"
 
 #ifndef FLATBUFFERS_PREFER_PRINTF
 #  include <iomanip>
