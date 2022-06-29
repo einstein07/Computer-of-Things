@@ -24,13 +24,25 @@ int main(){
     const OperationRequest* request_ = deserializeWorkpackage("Workpackage.data");
 
     std::cout << "Work Package ID: " << request_ -> id() << " read from file. Processing. . ."<< std::endl;
+    std::cout << "Matrix A: \n" 
+              << request_ -> request_as_BivariateMatrixRequest() -> a_as_Matrix2D() -> elements() ->  Get(0) << " "
+              << request_ -> request_as_BivariateMatrixRequest() -> a_as_Matrix2D() -> elements() ->  Get(1) << " " 
+              << request_ -> request_as_BivariateMatrixRequest() -> a_as_Matrix2D() -> elements() ->  Get(2) << " " 
+              << request_ -> request_as_BivariateMatrixRequest() -> a_as_Matrix2D() -> elements() ->  Get(3) << std::endl;
+    
+    std::cout << "Matrix B: \n" 
+              << request_ -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D() -> elements() ->  Get(0) << " "
+              << request_ -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D() -> elements() ->  Get(1) << " " 
+              << request_ -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D() -> elements() ->  Get(2) << " " 
+              << request_ -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D() -> elements() ->  Get(3) << std::endl;
+
     const OperationResponse* response_ = process_work_packages(request_);
     std::cout << "Workpackage processed: \n" 
               << "Response id: "<<response_ ->id() << "\n"
-              << "Result: " << response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() -> n_cols() <<std::endl;
-              //<< response_ -> response_as_MatrixResponse() -> response_as_Matrix2D()response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() -> Get(0) ->elements() -> Get(1) << " " 
-              //<< response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() -> Get(2) << " " 
-              //<< response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() -> Get(3) << std::endl;
+              << "Result: " << response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() ->  Get(0) << " "
+              << response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() ->  Get(1) << " " 
+              << response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() -> Get(2) << " " 
+              << response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() -> Get(3) << std::endl;
 
 
 
@@ -45,8 +57,8 @@ flatbuffers::FlatBufferBuilder buildOperationRequest(){
     //auto scalarRequest = CreateBivariateScalarRequest(builder, 2.5f, 0.5f);
     // Create matrices to query
     std::vector<float> elem_a;
-    elem_a.push_back(0.5);elem_a.push_back(0.5);
-    elem_a.push_back(0.5);elem_a.push_back(0.5);
+    elem_a.push_back(1);elem_a.push_back(2);
+    elem_a.push_back(3);elem_a.push_back(4);
     auto elements_a = builder.CreateVector(elem_a);
     auto matrix_a = CreateMatrix2D(builder, 2, 2, elements_a);
     std::vector<float> elem_b;
