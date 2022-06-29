@@ -1,5 +1,5 @@
 CC = em++
-INC_DIR = include /usr/include/flatbuffers
+INC_DIR = include
 SRC_DIR = src
 OBJ_DIR = Object
 CFLAGS  = -c -Wall -I.
