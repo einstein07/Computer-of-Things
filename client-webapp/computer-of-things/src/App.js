@@ -1,24 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
+import Module from "./ComputerOfThings.mjs";
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1> Computer of Things </h1>  
       </header>
+      <div className="App-content">
+        <text>Connected</text>
+        
+      <textarea ></textarea>
+          <div className="App-button-container">
+            <button className="App-button" >Connect</button>
+            </div>
+
+        </div>
     </div>
+    
   );
 }
 

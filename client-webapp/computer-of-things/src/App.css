@@ -23,9 +23,36 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.App-content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  margin: 10px;
+  background-color: #282c34;
+}
 
 .App-link {
   color: #61dafb;
+}
+.App-button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.App-button {
+  min-height: 8vh;
+  min-width: 20vh;
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(15px);
+  color: black;
 }
 
 @keyframes App-logo-spin {
