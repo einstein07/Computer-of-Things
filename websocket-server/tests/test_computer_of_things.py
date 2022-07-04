@@ -1,4 +1,4 @@
-from cothings import __version__
+from computer_of_things import __version__
 
 
 def test_version():

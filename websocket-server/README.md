@@ -1,20 +1,19 @@
-# CoThings - WebSocket server
+# Computer-of-Things : WebSocket server
 
-A simple WebSocket server written in Python, used during development for CoThings.
+A simple WebSocket server written in Python, used during development for the Computer-of-Things.
 
 The Websocket server is responsible for:
-- listening, accepting and managing websocket connections from WASM workers (clients)
-- keeping track of all WASM workers that have *active* connections
+- listening, accepting and managing websocket connections from clients
+- keeping track of all clients that have *active* connections
 - accepting work-packages from external drivers, in the form of Python objects generated from the work-package Flatbuffers schema
-- distributing work-packages to connected WASM workers
-- 
+- distributing work-packages to connected clients
 
 The Websocket server is NOT responsibly for:
-- serving the worker web application to clients
+- serving the client web-app
 
 # Before you get started
 
-The CoThings websocket server uses the [Poetry framework](https://python-poetry.org/) to ease development and building of the project and its dependencies. In order to get started with the websocket server, first install Poetry by [following installation steps](https://python-poetry.org/docs/#installation).
+The Computer-of-Things websocket server uses the [Poetry framework](https://python-poetry.org/) to ease development and building of the project and its dependencies. In order to get started with the websocket server, first install Poetry by [following installation steps](https://python-poetry.org/docs/#installation).
 
 # Quickstart
 
@@ -25,7 +24,7 @@ $ cd {project-root}/websocket-server
 $ poetry install -v
 ```
 
-Poetry reads the `pyproject.toml` file, and installs the CoThings websocket server, along with all it's dependencies, into an isolated Python environment (see Python virtual environments). The `-v` outputs more verbose information.
+Poetry reads the `pyproject.toml` file, and installs the Computer-of_Things websocket server, along with all it's dependencies, into an isolated Python environment (see Python virtual environments). The `-v` outputs more verbose information.
 
 With the package installed, start up the websocket server by running:
 
@@ -46,6 +45,5 @@ Type in a few messages, and see what gets returned!
 # Design
 
 Work in progress
-
 
 

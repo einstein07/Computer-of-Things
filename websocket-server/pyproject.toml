@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cothings"
+name = "computer_of_things"
 version = "0.1.0"
 description = ""
 authors = ["Malan Ruppert <malan.ruppert@vastech.co.za>"]
@@ -7,6 +7,7 @@ authors = ["Malan Ruppert <malan.ruppert@vastech.co.za>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 websockets = "^10.3"
+flatbuffers = "^2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
