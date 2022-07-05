@@ -40,9 +40,9 @@ def createMatrixMultiplyRequest(n_rows: int, n_cols: int):
     builder = flatbuffers.Builder(1024)
 
     # since we are building in reverse, we want to create the BivariateMatrixRequest first
-    BivariateMatrixRequest.BivariateMatrixRequestStart(builder)
     matrix_a = addRandomMatrix2D(builder, n_rows, n_cols)
     matrix_b = addRandomMatrix2D(builder, n_rows, n_cols)
+    BivariateMatrixRequest.BivariateMatrixRequestStart(builder)
     BivariateMatrixRequest.BivariateMatrixRequestAddA(builder, matrix_a)
     BivariateMatrixRequest.BivariateMatrixRequestAddB(builder, matrix_b)
     BivariateMatrixRequest.BivariateMatrixRequestEnd(builder)
