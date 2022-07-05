@@ -8,6 +8,7 @@ authors = ["Malan Ruppert <malan.ruppert@vastech.co.za>"]
 python = "^3.8"
 websockets = "^10.3"
 flatbuffers = "^2.0"
+numpy = "^1.23.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
