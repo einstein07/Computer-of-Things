@@ -1,5 +1,6 @@
-#include "include/ComputerOfThings.h"
+#include "ComputerOfThings.h"
 #include <iostream>
+#include <fstream>
 using namespace workpackage;
 using namespace workpackage::response;
 using namespace workpackage::common;
@@ -97,6 +98,19 @@ const OperationResponse* process_work_packages(const OperationRequest* request_)
         return flatbuffers::GetRoot<workpackage::OperationResponse>(builder.GetBufferPointer());
     }
     
+}
+
+const OperationRequest* deserializeWorkpackage(const std::string & fileName){
+	std::ifstream infile;
+	infile.open(fileName, std::ios::binary | std::ios::in);
+	infile.seekg(0, std::ios::end);
+	int length = infile.tellg();
+	infile.seekg(0, std::ios::beg);
+	char* data = new char[length];
+	infile.read(data, length);
+    std::cout << "Length: " << length << std::endl;
+	infile.close();
+	return flatbuffers::GetRoot<workpackage::OperationRequest>(data);
 }
 
 
