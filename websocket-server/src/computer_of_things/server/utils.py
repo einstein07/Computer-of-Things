@@ -45,13 +45,14 @@ def createMatrixMultiplyRequest(n_rows: int, n_cols: int):
     BivariateMatrixRequest.BivariateMatrixRequestStart(builder)
     BivariateMatrixRequest.BivariateMatrixRequestAddA(builder, matrix_a)
     BivariateMatrixRequest.BivariateMatrixRequestAddB(builder, matrix_b)
-    BivariateMatrixRequest.BivariateMatrixRequestEnd(builder)
+    bivar_request = BivariateMatrixRequest.BivariateMatrixRequestEnd(builder)
 
     # we finally build the OperationRequest message
     OperationRequestStart(builder)
     OperationRequestAddId(builder, 1)
     OperationRequestAddOpType(builder, Operation.MULTIPLY)
     OperationRequestAddRequestType(builder, Request.Request().BivariateMatrixRequest)
+    
     op_request = OperationRequestEnd(builder)
 
     # instruct the builder that our message is complete
@@ -60,17 +61,6 @@ def createMatrixMultiplyRequest(n_rows: int, n_cols: int):
     serialized_mesg = builder.Output()
 
     return serialized_mesg
-
-
-
-
-
-
-
-
-
-
-
 
 
 def createAddRequest():
