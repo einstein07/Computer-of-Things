@@ -29,21 +29,8 @@ Poetry reads the `pyproject.toml` file, and installs the Computer-of_Things webs
 With the package installed, start up the websocket server by running:
 
 ```shell
-poetry run python3 -m cothings.websocket.server
+poetry run python3 -m computer_of_things.server
 ```
 
 The websocket server is now running, and listening on port 8765 for websocket connections from clients. 
-
-To simulate a client, open up a new terminal, navigate to the `websocket-server` directory, and run:
-
-```shell
-poetry run python3 -m websockets ws://localhost:8765/
-```
-
-Type in a few messages, and see what gets returned!
-
-# Design
-
-Work in progress
-
 
