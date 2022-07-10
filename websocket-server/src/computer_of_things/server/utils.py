@@ -47,11 +47,13 @@ def createMatrixMultiplyRequest(n_rows: int, n_cols: int):
     BivariateMatrixRequest.BivariateMatrixRequestAddB(builder, matrix_b)
     bivar_request = BivariateMatrixRequest.BivariateMatrixRequestEnd(builder)
 
-    # we finally build the OperationRequest message
+    # we start building the OperationRequest message
     OperationRequestStart(builder)
     OperationRequestAddId(builder, 1)
     OperationRequestAddOpType(builder, Operation.MULTIPLY)
+    # the "request" field is a union, so we need to specify the union type and the union data
     OperationRequestAddRequestType(builder, Request.Request().BivariateMatrixRequest)
+    OperationRequestAddRequest(builder, bivar_request)
     
     op_request = OperationRequestEnd(builder)
 
