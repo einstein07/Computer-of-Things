@@ -1,4 +1,4 @@
-#include "include/ComputerOfThings.h"
+#include "ComputerOfThings.h"
 #include <iostream>
 #include <fstream>
 using namespace workpackage;
