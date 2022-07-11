@@ -41,11 +41,11 @@ function wrapProcessWorkPackage(Module) {
       "number",
       [buffer, resultBuffer]
     );
-    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT  );
-    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 1 );  
-    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 2 );
-    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 3 );
-    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 4 );      
+    console.log(  Module.getValue(resultPointer, "i8") );
+    console.log( Module.getValue(resultPointer+4, "i8") );  
+    console.log( Module.getValue(resultPointer+8, "i8") );
+    console.log( Module.getValue(resultPointer+12, "i8") );
+    console.log( Module.getValue(resultPointer+16, "i8") );      
 
     // Release memory
     Module._free(buffer);
