@@ -1,20 +1,24 @@
+import React, { useState, useEffect, useRef } from "react";
 import logo from './logo.svg';
 import './App.css';
-import Module from "./ComputerOfThings.mjs";
+import Wasm from "react-wasm";
+import createModule from "./ComputerOfThings.mjs";
+
 // Webassembly: shared objects?
 // https://stackoverflow.com/questions/67655485/webassembly-possible-to-have-shared-objects
+// WebAssemby Javascript interaction
+// https://dominoc925.blogspot.com/2020/12/how-to-setup-c-webassembly-component-to.html 
+// How to grab byte array after srialization in c++
+// https://stackoverflow.com/questions/51483768/how-to-grab-byte-array-after-serialization
 /**
 * @param {Module}
-* @return {Array} - an array of fft values
 **/
-function wrapProcessWorkPackages(Module) {
+function wrapProcessWorkPackage(Module) {
   // JS-friendly wrapper around the WASM call
-  return function (inputData) {
-    const length = inputData.length;
-
-    // set up input arrays with the input data -- remove holes if any
-    const flatInputData = new Float32Array(inputData);
-
+  return function (request) {
+    const flatInputData = new Float32Array(request);
+    console.log ("request length: " + flatInputData.length)
+    console.log ("request bytes per element: " + flatInputData.BYTES_PER_ELEMENT)
     const buffer = Module._malloc(
       flatInputData.length * flatInputData.BYTES_PER_ELEMENT
     );
@@ -24,49 +28,151 @@ function wrapProcessWorkPackages(Module) {
     const resultBuffer = Module._malloc(
       flatInputData.length * flatInputData.BYTES_PER_ELEMENT
     );
-
     // make the call
     const resultPointer = Module.ccall(
-      "process_work_packages",
+      "processWorkPackages",
       "number",
-      ["number", "number"],
+      "number",
       [buffer, resultBuffer]
     );
+    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT  );
+    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 1 );  
+    console.log( Module.getValue(resultPointer+8, 'i32') );
+    console.log( Module.getValue(resultPointer+12, 'i32') );
+    console.log( Module.getValue(resultPointer+16, 'i32') );      
 
-    // get the data from the returned pointer into an flat array
-    const result = [];
-    for (let i = 0; i < length; i++) {
-      result.push(
-        Module.HEAPF32[resultPointer / Float32Array.BYTES_PER_ELEMENT + i]
-      );
-    }
     // Release memory
     Module._free(buffer);
     Module._free(resultBuffer);
-    return result;
+    return resultPointer;
   };
 }
 
+/**async function getByte() {
+
+  var importObject = {
+    imports: {
+      imported_func: function(arg) {
+        console.log(arg);
+      }
+    }
+  };
+  
+  fetch('ComputerOfThings.wasm').then(response =>
+    response.arrayBuffer()
+  ).then(bytes =>
+    WebAssembly.instantiate(bytes, importObject)
+  ).then(result =>
+    result.instance.exports.exported_func()
+  );
+}*/
 
 function App() {
+  //////////////////////////////////////////////////////////////////////////////
+  // States and variables
+  //////////////////////////////////////////////////////////////////////////////
+  const [connectionState, setConnectionState] = useState(false);
+  const [receiveState, setReceiveState] = useState(false);
+  const [processWorkPackages, setProcessWorkPackage] = useState();
+  const reader = new FileReader();
+  var serverAddress;
+  var websocket;
+  var request;
 
+  useEffect(
+    // useEffect here is roughly equivalent to putting this in componentDidMount
+    // for a class component
+    () => {
+      createModule().then((Module) => {
+        // need to use callback form (() => function) to ensure that `add` is
+        // set to the function if you use setX(myModule.cwrap(...)) then React
+        // will try to set newX = myModule.cwrap(currentX), which is wrong
+        setProcessWorkPackage(() => wrapProcessWorkPackage(Module));
+      });
+    },
+    []
+  );
+  const onProcessConnectButtonClick = () => {
+    serverAddress = document.getElementById("serverTextArea").value;
+    var completeAddress = "ws://" + serverAddress;
+    //const websocket = new WebSocket("ws://localhost:8765/");
+    websocket = new WebSocket(completeAddress);
+    websocket.onopen = () => {
+      console.log("Connected");
+      setConnectionState(true);
+      
+      setInterval(function() {
+      console.log("receive state: " + receiveState);
+      // Im' not busy anymore - set a flag or something like that
+      if(websocket.bufferedAmount == 0 && receiveState){
+        console.log("ready to process data");
+        console.log(reader.readAsArrayBuffer(request))
+        var response = processWorkPackages( reader.readAsArrayBuffer(request) );
+
+        //websocket.onopen = () => {
+        console.log("Sending response. . .");
+        websocket.send(response);
+      }
+        /**if (websocket.bufferedAmount == 0){
+          
+        }*/
+      }, 50);
+    }
+    websocket.addEventListener("message", ({ data }) => {
+    
+      console.log("receiving data . . .");
+      
+      request = data;
+      setReceiveState(true);
+
+      
+      
+      
+    });
+    /**websocket.addEventListener("open", () =>{
+      
+    });*/
+  }
+  const onProcessDisconnectButtonClick = () => {
+    setConnectionState(false);
+    websocket.close();
+  }
+ //getByte();
+ if (!connectionState) {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1> Computer of Things</h1>
+        <h4> Not connected to server</h4>
+
+        <textarea id="serverTextArea"></textarea>
+        <div className="App-button-container">
+          <button className="App-button" onClick={onProcessConnectButtonClick}>Connect</button>
+        </div>
+      </header>
+      
+        
+    </div>
+    );
+}
+if(connectionState){
   return (
     <div className="App">
       <header className="App-header">
         <h1> Computer of Things </h1>  
-      </header>
-      <div className="App-content">
-        <text>Connected</text>
-        
-      <textarea ></textarea>
-          <div className="App-button-container">
-            <button className="App-button" >Connect</button>
-            </div>
-
+        <h4> Connected to server {serverAddress}</h4>
+        <div className="App-button-container">
+          <button className="App-button" onClick={onProcessDisconnectButtonClick}>Disconnect</button>
         </div>
+
+      </header>
+
+      
     </div>
     
   );
+}
+  
 }
 
 export default App;
