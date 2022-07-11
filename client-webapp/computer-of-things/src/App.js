@@ -17,20 +17,22 @@ function wrapProcessWorkPackage(Module) {
   // JS-friendly wrapper around the WASM call
   return function (request) {
     
-    const flatInputData = new Float32Array(request);
+    const flatInputData = new Uint8Array(request);
     
-    console.log ("request length: " + flatInputData.length)
-    console.log ("request bytes per element: " + flatInputData.BYTES_PER_ELEMENT)
+    console.log ("request length: " + flatInputData.length);
+    console.log ("request bytes per element: " + flatInputData.BYTES_PER_ELEMENT);
+    console.log("Request byte array:");
+    console.log(flatInputData);
     
     const buffer = Module._malloc(
-      flatInputData.length * flatInputData.BYTES_PER_ELEMENT
+      flatInputData.length * flatInputData.BYTES_PER_ELEMENT 
     );
     
-    Module.HEAPF32.set(flatInputData, buffer >> 2);
+    Module.HEAP32.set(flatInputData, buffer >> 2);
 
     // allocate memory for the result array
     const resultBuffer = Module._malloc(
-      flatInputData.length/*112 */ * flatInputData.BYTES_PER_ELEMENT
+      flatInputData.length * flatInputData.BYTES_PER_ELEMENT 
     );
     // make the call
     const resultPointer = Module.ccall(
@@ -39,11 +41,11 @@ function wrapProcessWorkPackage(Module) {
       "number",
       [buffer, resultBuffer]
     );
-    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT  );
-    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 1 );  
-    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 2 );
-    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 3 );
-    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 4 );      
+    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT  );
+    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 1 );  
+    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 2 );
+    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 3 );
+    console.log( resultPointer / Uint8Array.BYTES_PER_ELEMENT + 4 );      
 
     // Release memory
     Module._free(buffer);
@@ -118,11 +120,12 @@ function App() {
         });*/
         var buf = new ArrayBuffer(8);
         var request = new Uint8Array(evt.data);
-        //console.log(request)
+
+        console.log(request)
         setReceiveState(true);
         
         console.log("ready to process data");
-        console.log("Recieved data:\n" + request);
+        //console.log("Recieved data:\n" + request);
         var response = processWorkPackages( request);
 
         console.log("Sending response. . .");
