@@ -16,17 +16,21 @@ import createModule from "./ComputerOfThings.mjs";
 function wrapProcessWorkPackage(Module) {
   // JS-friendly wrapper around the WASM call
   return function (request) {
+    
     const flatInputData = new Float32Array(request);
+    
     console.log ("request length: " + flatInputData.length)
     console.log ("request bytes per element: " + flatInputData.BYTES_PER_ELEMENT)
+    
     const buffer = Module._malloc(
       flatInputData.length * flatInputData.BYTES_PER_ELEMENT
     );
+    
     Module.HEAPF32.set(flatInputData, buffer >> 2);
 
     // allocate memory for the result array
     const resultBuffer = Module._malloc(
-      flatInputData.length * flatInputData.BYTES_PER_ELEMENT
+      flatInputData.length/*112 */ * flatInputData.BYTES_PER_ELEMENT
     );
     // make the call
     const resultPointer = Module.ccall(
@@ -37,9 +41,9 @@ function wrapProcessWorkPackage(Module) {
     );
     console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT  );
     console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 1 );  
-    console.log( Module.getValue(resultPointer+8, 'i32') );
-    console.log( Module.getValue(resultPointer+12, 'i32') );
-    console.log( Module.getValue(resultPointer+16, 'i32') );      
+    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 2 );
+    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 3 );
+    console.log( resultPointer / Float32Array.BYTES_PER_ELEMENT + 4 );      
 
     // Release memory
     Module._free(buffer);
@@ -97,28 +101,52 @@ function App() {
     var completeAddress = "ws://" + serverAddress;
     //const websocket = new WebSocket("ws://localhost:8765/");
     websocket = new WebSocket(completeAddress);
+    websocket.binaryType = 'arraybuffer';
+    var buffer;
+
+    websocket.onmessage = function (evt) {
+      
+        /*console.log("blob");
+        var reader = new FileReader();
+        reader.readAsArrayBuffer(evt.data);
+        reader.addEventListener("loadend", function(e)
+        {
+            buffer = new Uint16Array(e.target.result);  // arraybuffer object
+            setReceiveState(true);
+            Array.prototype.slice.call(buffer.slice());
+
+        });*/
+        var buf = new ArrayBuffer(8);
+        var request = new Uint8Array(evt.data);
+        //console.log(request)
+        setReceiveState(true);
+        
+        console.log("ready to process data");
+        console.log("Recieved data:\n" + request);
+        var response = processWorkPackages( request);
+
+        console.log("Sending response. . .");
+        websocket.send(response);
+        
+    };
+
     websocket.onopen = () => {
       console.log("Connected");
       setConnectionState(true);
-      
-      setInterval(function() {
-      console.log("receive state: " + receiveState);
-      // Im' not busy anymore - set a flag or something like that
-      if(websocket.bufferedAmount == 0 && receiveState){
-        console.log("ready to process data");
-        console.log(reader.readAsArrayBuffer(request))
-        var response = processWorkPackages( reader.readAsArrayBuffer(request) );
 
-        //websocket.onopen = () => {
-        console.log("Sending response. . .");
-        websocket.send(response);
-      }
+      //setInterval(function() {
+      //console.log("receive state: " + receiveState);
+      // Im' not busy anymore - set a flag or something like that
+      //if(/**websocket.bufferedAmount == 0 &&*/ receiveState){
+        
+      //}
         /**if (websocket.bufferedAmount == 0){
           
         }*/
-      }, 50);
+      //}, 50);
     }
-    websocket.addEventListener("message", ({ data }) => {
+
+    /**websocket.addEventListener("message", ({ data }) => {
     
       console.log("receiving data . . .");
       
@@ -128,7 +156,7 @@ function App() {
       
       
       
-    });
+    });*/
     /**websocket.addEventListener("open", () =>{
       
     });*/

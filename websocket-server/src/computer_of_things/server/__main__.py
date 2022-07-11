@@ -14,7 +14,10 @@ async def connection_handler(websocket_connection: Connection):
     """
 
     CONNECTED_CLIENTS.append(websocket_connection)
-    await websocket_connection.send_binary(createMatrixMultiplyRequest(2, 2))
+    print("request byte array:")
+    buff = createMatrixMultiplyRequest(2, 2)
+    print(", ".join(hex(b) for b in buff))
+    await websocket_connection.send(buff)
     response = await websocket_connection.recv()
     print("Received response from client: ", response)
 
