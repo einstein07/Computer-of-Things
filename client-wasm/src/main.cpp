@@ -21,8 +21,8 @@ int main(){
         
     std::cout << "Done Writing to file. . . Will read from the file now. . ." << std::endl;
 
-    const OperationRequest* request_ = deserializeWorkpackage("Workpackage.data");
-
+    char* request_data = deserializeWorkpackage("Workpackage.data");
+    const OperationRequest* request_ =  flatbuffers::GetRoot<workpackage::OperationRequest>(request_data);
     std::cout << "Work Package ID: " << request_ -> id() << " read from file. Processing. . ."<< std::endl;
     std::cout << "Matrix A: \n" 
               << request_ -> request_as_BivariateMatrixRequest() -> a_as_Matrix2D() -> elements() ->  Get(0) << " "
@@ -36,7 +36,8 @@ int main(){
               << request_ -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D() -> elements() ->  Get(2) << " " 
               << request_ -> request_as_BivariateMatrixRequest() -> b_as_Matrix2D() -> elements() ->  Get(3) << std::endl;
 
-    const OperationResponse* response_ = process_work_packages(request_);
+    char* response_data = processWorkPackages(request_data);
+    const OperationResponse* response_ = flatbuffers::GetRoot<workpackage::OperationResponse>(response_data);
     std::cout << "Workpackage processed: \n" 
               << "Response id: "<<response_ ->id() << "\n"
               << "Result: " << response_ -> response_as_MatrixResponse() -> response_as_Matrix2D() ->elements() ->  Get(0) << " "

@@ -24,4 +24,4 @@ $(EXECUTABLE):$(OBJS)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/ComputerOfThings.o: $(DEPS)
+#$(OBJ_DIR)/ComputerOfThings.o: $(DEPS)

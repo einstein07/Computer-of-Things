@@ -11,6 +11,7 @@ $(EXECUTABLE):$(SRCS)
 	$(CC) --no-entry $(SRCS) -o $(EXECUTABLE) \
 	-s ENVIRONMENT='web' \
 	-s SINGLE_FILE=1 \
+	-s ALLOW_MEMORY_GROWTH=1 \
 	-s WASM=1 \
 	-s EXPORT_NAME='createModule' \
 	-s USE_ES6_IMPORT_META=0 \

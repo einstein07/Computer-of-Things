@@ -57,7 +57,10 @@ std::vector<float> mult(const workpackage::common::Matrix2D* a, const workpackag
 }
 
 
-uint8_t* /**OperationResponse*/ processWorkPackages(const OperationRequest* request_){
+char* /**OperationResponse*/ processWorkPackages(/**const OperationRequest* request_*/char* data){
+    //std::cout << "Converting byte array to operation request type pointer" << std::endl;
+    const OperationRequest* request_ = flatbuffers::GetRoot<workpackage::OperationRequest>(data);
+    //std::cout << "Done" << std::endl;
     long requestId_ = request_ -> id();
     Operation operation_ = request_ -> op_type();
     float responseValue = 0.0f;
@@ -88,7 +91,8 @@ uint8_t* /**OperationResponse*/ processWorkPackages(const OperationRequest* requ
         auto response_ = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_ScalarResponse , scalarResponse.Union());
         builder.Finish(response_);
         response_length = builder.GetSize();
-        return builder.GetBufferPointer();
+        //std::cout << "response length: " << response_length <<std::endl;
+        return (char*)builder.GetBufferPointer();
         //return flatbuffers::GetRoot<workpackage::OperationResponse>(builder.GetBufferPointer());
     }
     else{
@@ -98,13 +102,15 @@ uint8_t* /**OperationResponse*/ processWorkPackages(const OperationRequest* requ
         auto response_ = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_MatrixResponse , matrixResponse.Union());
         builder.Finish(response_);
         response_length = builder.GetSize();
-        return builder.GetBufferPointer();
+        //std::cout << "response length: " << response_length <<std::endl;
+        return (char*)builder.GetBufferPointer();
+        
         //return flatbuffers::GetRoot<workpackage::OperationResponse>(builder.GetBufferPointer());
     }
     
 }
 
-const OperationRequest* deserializeWorkpackage(const std::string & fileName){
+char* deserializeWorkpackage(const std::string & fileName){
 	std::ifstream infile;
 	infile.open(fileName, std::ios::binary | std::ios::in);
 	infile.seekg(0, std::ios::end);
@@ -112,9 +118,9 @@ const OperationRequest* deserializeWorkpackage(const std::string & fileName){
 	infile.seekg(0, std::ios::beg);
 	char* data = new char[length];
 	infile.read(data, length);
-    std::cout << "Length: " << length << std::endl;
+    //std::cout << "Length: " << length << std::endl;
 	infile.close();
-	return flatbuffers::GetRoot<workpackage::OperationRequest>(data);
+	return data;
 }
 
 int getResponseLength(){

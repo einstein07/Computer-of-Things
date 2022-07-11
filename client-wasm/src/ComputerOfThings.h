@@ -3,7 +3,6 @@
 #define COMPUTER_OF_THINGS_H
 #include "workpackage_generated.h"
 #include "request_generated.h"
-        static int response_length;
         float add(float arg1, float arg2);
         std::vector<float> add(const workpackage::common::Matrix2D* a, const workpackage::common::Matrix2D* b);
         float subtract(float arg1, float arg2);
@@ -11,10 +10,10 @@
         float mult(float arg1, float arg2);
         std::vector<float> mult(const workpackage::common::Matrix2D* a, const workpackage::common::Matrix2D* b);
         extern "C" {
-        uint8_t* /*const workpackage::OperationResponse*/ processWorkPackages(const workpackage::OperationRequest* request_);
+        char* /*const workpackage::OperationResponse*/ processWorkPackages(/**const workpackage::OperationRequest* request_*/ char* data);
         }
         extern "C"{
-        const workpackage::OperationRequest* deserializeWorkpackage(const std::string & fileName);
+        char* deserializeWorkpackage(const std::string & fileName);
         }
         extern "C"{
         int getResponseLength();
