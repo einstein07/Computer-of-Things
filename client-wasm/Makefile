@@ -15,7 +15,7 @@ $(EXECUTABLE):$(SRCS)
 	-s WASM=1 \
 	-s EXPORT_NAME='createModule' \
 	-s USE_ES6_IMPORT_META=0 \
-	-s EXPORTED_FUNCTIONS='["_processWorkPackages", "_malloc", "_free"]' \
+	-s EXPORTED_FUNCTIONS='["_processWorkPackages", "_getResponseLength", "_malloc", "_free"]' \
 	-s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap", "getValue", "AsciiToString"]' \
 	-O3
 
