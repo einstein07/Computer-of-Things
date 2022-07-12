@@ -10,6 +10,9 @@ import createModule from "./ComputerOfThings.mjs";
 // https://dominoc925.blogspot.com/2020/12/how-to-setup-c-webassembly-component-to.html 
 // How to grab byte array after srialization in c++
 // https://stackoverflow.com/questions/51483768/how-to-grab-byte-array-after-serialization
+function dec2bin(dec) {
+  return (dec >>> 0).toString(2);
+}
 /**
 * @param {Module}
 **/
@@ -19,10 +22,7 @@ function wrapProcessWorkPackage(Module) {
     
     const flatInputData = new Uint8Array(request);
     
-    console.log ("request length: " + flatInputData.length);
-    console.log ("request bytes per element: " + flatInputData.BYTES_PER_ELEMENT);
-    console.log("Request byte array:");
-    console.log(flatInputData);
+    console.log ("Request buffer size: " + flatInputData.length);
     
     const buffer = Module._malloc(
       flatInputData.length * flatInputData.BYTES_PER_ELEMENT 
@@ -41,16 +41,27 @@ function wrapProcessWorkPackage(Module) {
       "number",
       [buffer, resultBuffer]
     );
-    console.log(  Module.getValue(resultPointer, "i8") );
-    console.log( Module.getValue(resultPointer+4, "i8") );  
-    console.log( Module.getValue(resultPointer+8, "i8") );
-    console.log( Module.getValue(resultPointer+12, "i8") );
-    console.log( Module.getValue(resultPointer+16, "i8") );      
-
+    // get the buffer size
+    const bufferSize = Module.ccall(
+      "getResponseLength",
+      "number",
+      []
+    );
+    console.log("Response buffer size: " + bufferSize);  
+    var index = 0;
+    const result = [];
+    const binResult = [];
+    for (let i = 0; i < bufferSize; i++) {
+      result.push(
+        Module.getValue(resultPointer+i, "i8")
+      );
+      
+      binResult.push(dec2bin(Module.getValue(resultPointer+i, "i8")));
+    }
     // Release memory
     Module._free(buffer);
     Module._free(resultBuffer);
-    return resultPointer;
+    return result;
   };
 }
 
@@ -98,13 +109,12 @@ function App() {
     
         var request = new Uint8Array(evt.data);
 
-        console.log(request)
         setReceiveState(true);
         
-        console.log("ready to process data");
+        console.log("Request workpackage received - processing. . .");
         var response = processWorkPackages( request);
 
-        console.log("Sending response. . .");
+        console.log("Sending response workpackage to server. . .");
         websocket.send(response);
     };
 
