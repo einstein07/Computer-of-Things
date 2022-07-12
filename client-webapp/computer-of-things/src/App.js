@@ -54,25 +54,6 @@ function wrapProcessWorkPackage(Module) {
   };
 }
 
-/**async function getByte() {
-
-  var importObject = {
-    imports: {
-      imported_func: function(arg) {
-        console.log(arg);
-      }
-    }
-  };
-  
-  fetch('ComputerOfThings.wasm').then(response =>
-    response.arrayBuffer()
-  ).then(bytes =>
-    WebAssembly.instantiate(bytes, importObject)
-  ).then(result =>
-    result.instance.exports.exported_func()
-  );
-}*/
-
 function App() {
   //////////////////////////////////////////////////////////////////////////////
   // States and variables
@@ -99,76 +80,56 @@ function App() {
     []
   );
   const onProcessConnectButtonClick = () => {
+    /*
+    When the user clicks Connect, we create a new WebSocket connection using the specified URL.
+    An event listener is added to the WebSocket connection, which listens for incoming messages.
+    When a message is received, it is simply passed as raw bytes to the Wasm module for processing.
+    The Wasm module will return a response, again as raw bytes, which is then sent back on the WebSocket connection.
+    */
+
+    // Create WebSocket connection
     serverAddress = document.getElementById("serverTextArea").value;
     var completeAddress = "ws://" + serverAddress;
-    //const websocket = new WebSocket("ws://localhost:8765/");
     websocket = new WebSocket(completeAddress);
     websocket.binaryType = 'arraybuffer';
-    var buffer;
 
+    // Add event listener for when a message is received on the websocket connection
     websocket.onmessage = function (evt) {
-      
-        /*console.log("blob");
-        var reader = new FileReader();
-        reader.readAsArrayBuffer(evt.data);
-        reader.addEventListener("loadend", function(e)
-        {
-            buffer = new Uint16Array(e.target.result);  // arraybuffer object
-            setReceiveState(true);
-            Array.prototype.slice.call(buffer.slice());
-
-        });*/
-        var buf = new ArrayBuffer(8);
+    
         var request = new Uint8Array(evt.data);
 
         console.log(request)
         setReceiveState(true);
         
         console.log("ready to process data");
-        //console.log("Recieved data:\n" + request);
         var response = processWorkPackages( request);
 
         console.log("Sending response. . .");
         websocket.send(response);
-        
     };
 
+    // Add event listener for when websocket connection is opened
     websocket.onopen = () => {
-      console.log("Connected");
+      console.log("WebSocket connection established.");
       setConnectionState(true);
-
-      //setInterval(function() {
-      //console.log("receive state: " + receiveState);
-      // Im' not busy anymore - set a flag or something like that
-      //if(/**websocket.bufferedAmount == 0 &&*/ receiveState){
-        
-      //}
-        /**if (websocket.bufferedAmount == 0){
-          
-        }*/
-      //}, 50);
     }
 
-    /**websocket.addEventListener("message", ({ data }) => {
-    
-      console.log("receiving data . . .");
-      
-      request = data;
-      setReceiveState(true);
+    // Add event listener for when websocket connection is closed
+    websocket.onclose = () => {
+      console.log("WebSocket disconnected.");
+      setConnectionState(false);
+    }
 
-      
-      
-      
-    });*/
-    /**websocket.addEventListener("open", () =>{
-      
-    });*/
   }
   const onProcessDisconnectButtonClick = () => {
-    setConnectionState(false);
+    /*
+    When a user clicks Disconnect, we simply want to close the WebSocket connection.
+    Any work packages that are still being processed should be safely dropped.
+    */
     websocket.close();
+    setConnectionState(false);
   }
- //getByte();
+
  if (!connectionState) {
   return (
     <div className="App">
