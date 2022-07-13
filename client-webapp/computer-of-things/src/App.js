@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import logo from './logo.svg';
 import './App.css';
-import Wasm from "react-wasm";
+import WSConnectComponent from './components/WSConnectComponent';
+import StateComponent from './components/StateComponent';
 import createModule from "./ComputerOfThings.mjs";
 
 // Webassembly: shared objects?
@@ -69,13 +69,15 @@ function App() {
   //////////////////////////////////////////////////////////////////////////////
   // States and variables
   //////////////////////////////////////////////////////////////////////////////
-  const [connectionState, setConnectionState] = useState(false);
-  const [receiveState, setReceiveState] = useState(false);
   const [processWorkPackages, setProcessWorkPackage] = useState();
   const reader = new FileReader();
-  var serverAddress;
-  var websocket;
-  var request;
+  
+  // App state variables
+  const [wasmLoaded, setWasmLoaded] = useState(false);
+  const [websocketConnected, setWebSocketConnected] = useState(false);
+  const [workpackagesCount, setWorkPackagesCount] = useState(0);
+  const [busyProcessing, setBusyProcessing] = useState(false);
+  const [websocketConnection, setConnection] = useState(null);
 
   useEffect(
     // useEffect here is roughly equivalent to putting this in componentDidMount
@@ -86,11 +88,13 @@ function App() {
         // set to the function if you use setX(myModule.cwrap(...)) then React
         // will try to set newX = myModule.cwrap(currentX), which is wrong
         setProcessWorkPackage(() => wrapProcessWorkPackage(Module));
+        setWasmLoaded(true);
       });
     },
     []
   );
-  const onProcessConnectButtonClick = () => {
+
+  function connectHandler(url) {
     /*
     When the user clicks Connect, we create a new WebSocket connection using the specified URL.
     An event listener is added to the WebSocket connection, which listens for incoming messages.
@@ -98,83 +102,62 @@ function App() {
     The Wasm module will return a response, again as raw bytes, which is then sent back on the WebSocket connection.
     */
 
-    // Create WebSocket connection
-    serverAddress = document.getElementById("serverTextArea").value;
-    var completeAddress = "ws://" + serverAddress;
-    websocket = new WebSocket(completeAddress);
+    // Create a WebSocket connection
+    if (!url.startsWith("ws://")) {
+      url = "ws://" + url;
+    }
+    var websocket = new WebSocket(url);
     websocket.binaryType = 'arraybuffer';
 
     // Add event listener for when a message is received on the websocket connection
     websocket.onmessage = function (evt) {
-    
-        var request = new Uint8Array(evt.data);
 
-        setReceiveState(true);
-        
-        console.log("Request workpackage received - processing. . .");
-        var response = processWorkPackages( request);
+      var request = new Uint8Array(evt.data);
 
-        console.log("Sending response workpackage to server. . .");
-        websocket.send(response);
+      setBusyProcessing(true);
+      console.log("Request workpackage received - processing. . .");
+      var response = processWorkPackages(request);
+      setBusyProcessing(false);
+
+      console.log("Sending response workpackage to server. . .");
+      websocket.send(response);
+
+      // update the workpackage count
+      setWorkPackagesCount(prevCount => prevCount + 1);
     };
 
     // Add event listener for when websocket connection is opened
     websocket.onopen = () => {
       console.log("WebSocket connection established.");
-      setConnectionState(true);
+      setWebSocketConnected(true);
     }
 
     // Add event listener for when websocket connection is closed
     websocket.onclose = () => {
       console.log("WebSocket disconnected.");
-      setConnectionState(false);
+      setWebSocketConnected(false);
     }
 
+    setConnection(websocket);
   }
-  const onProcessDisconnectButtonClick = () => {
+
+  function disconnectHandler() {
     /*
     When a user clicks Disconnect, we simply want to close the WebSocket connection.
     Any work packages that are still being processed should be safely dropped.
     */
-    websocket.close();
-    setConnectionState(false);
+    websocketConnection.close();
   }
 
- if (!connectionState) {
   return (
     <div className="App">
       <header className="App-header">
-        <h1> Computer of Things</h1>
-        <h4> Not connected to server</h4>
-
-        <textarea id="serverTextArea"></textarea>
-        <div className="App-button-container">
-          <button className="App-button" onClick={onProcessConnectButtonClick}>Connect</button>
-        </div>
+        <h1>Computer of Things</h1>
+      <WSConnectComponent connected={websocketConnected} connectHandler={connectHandler} disconnectHandler={disconnectHandler} />
+      <StateComponent wasmLoaded={wasmLoaded} processedCount={workpackagesCount} busy={busyProcessing} />
       </header>
-      
-        
     </div>
-    );
-}
-if(connectionState){
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1> Computer of Things </h1>  
-        <h4> Connected to server {serverAddress}</h4>
-        <div className="App-button-container">
-          <button className="App-button" onClick={onProcessDisconnectButtonClick}>Disconnect</button>
-        </div>
-
-      </header>
-
-      
-    </div>
-    
-  );
-}
-  
+    ); 
 }
 
 export default App;
