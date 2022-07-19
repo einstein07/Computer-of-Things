@@ -4,43 +4,43 @@
 
 import flatbuffers
 
-class OperationResponse(object):
+class WorkpackageRequest(object):
     __slots__ = ['_tab']
 
     @classmethod
-    def GetRootAsOperationResponse(cls, buf, offset):
+    def GetRootAsWorkpackageRequest(cls, buf, offset):
         n = flatbuffers.encode.Get(flatbuffers.packer.uoffset, buf, offset)
-        x = OperationResponse()
+        x = WorkpackageRequest()
         x.Init(buf, n + offset)
         return x
 
-    # OperationResponse
+    # WorkpackageRequest
     def Init(self, buf, pos):
         self._tab = flatbuffers.table.Table(buf, pos)
 
-    # OperationResponse
+    # WorkpackageRequest
     def Id(self):
         o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(4))
         if o != 0:
             return self._tab.Get(flatbuffers.number_types.Int64Flags, o + self._tab.Pos)
         return 0
 
-    # OperationResponse
+    # WorkpackageRequest
     def OpType(self):
         o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(6))
         if o != 0:
-            return self._tab.Get(flatbuffers.number_types.Int8Flags, o + self._tab.Pos)
+            return self._tab.Get(flatbuffers.number_types.Uint16Flags, o + self._tab.Pos)
         return 0
 
-    # OperationResponse
-    def ResponseType(self):
+    # WorkpackageRequest
+    def RequestType(self):
         o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(8))
         if o != 0:
             return self._tab.Get(flatbuffers.number_types.Uint8Flags, o + self._tab.Pos)
         return 0
 
-    # OperationResponse
-    def Response(self):
+    # WorkpackageRequest
+    def Request(self):
         o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(10))
         if o != 0:
             from flatbuffers.table import Table
@@ -49,9 +49,9 @@ class OperationResponse(object):
             return obj
         return None
 
-def OperationResponseStart(builder): builder.StartObject(4)
-def OperationResponseAddId(builder, id): builder.PrependInt64Slot(0, id, 0)
-def OperationResponseAddOpType(builder, opType): builder.PrependInt8Slot(1, opType, 0)
-def OperationResponseAddResponseType(builder, responseType): builder.PrependUint8Slot(2, responseType, 0)
-def OperationResponseAddResponse(builder, response): builder.PrependUOffsetTRelativeSlot(3, flatbuffers.number_types.UOffsetTFlags.py_type(response), 0)
-def OperationResponseEnd(builder): return builder.EndObject()
+def WorkpackageRequestStart(builder): builder.StartObject(4)
+def WorkpackageRequestAddId(builder, id): builder.PrependInt64Slot(0, id, 0)
+def WorkpackageRequestAddOpType(builder, opType): builder.PrependUint16Slot(1, opType, 0)
+def WorkpackageRequestAddRequestType(builder, requestType): builder.PrependUint8Slot(2, requestType, 0)
+def WorkpackageRequestAddRequest(builder, request): builder.PrependUOffsetTRelativeSlot(3, flatbuffers.number_types.UOffsetTFlags.py_type(request), 0)
+def WorkpackageRequestEnd(builder): return builder.EndObject()
