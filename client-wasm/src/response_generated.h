@@ -6,25 +6,16 @@
 
 #include "flatbuffers/flatbuffers.h"
 
-// Ensure the included flatbuffers.h is the same version as when this file was
-// generated, otherwise it may not be compatible.
-static_assert(FLATBUFFERS_VERSION_MAJOR == 2 &&
-              FLATBUFFERS_VERSION_MINOR == 0 &&
-              FLATBUFFERS_VERSION_REVISION == 6,
-             "Non-compatible flatbuffers version included");
-
 #include "common_generated.h"
 
 namespace workpackage {
 namespace response {
 
 struct ScalarResponse;
-struct ScalarResponseBuilder;
 
 struct MatrixResponse;
-struct MatrixResponseBuilder;
 
-enum Reponse : uint8_t {
+enum Reponse {
   Reponse_NONE = 0,
   Reponse_ScalarResponse = 1,
   Reponse_MatrixResponse = 2,
@@ -42,7 +33,7 @@ inline const Reponse (&EnumValuesReponse())[3] {
 }
 
 inline const char * const *EnumNamesReponse() {
-  static const char * const names[4] = {
+  static const char * const names[] = {
     "NONE",
     "ScalarResponse",
     "MatrixResponse",
@@ -52,7 +43,7 @@ inline const char * const *EnumNamesReponse() {
 }
 
 inline const char *EnumNameReponse(Reponse e) {
-  if (flatbuffers::IsOutRange(e, Reponse_NONE, Reponse_MatrixResponse)) return "";
+  if (e < Reponse_NONE || e > Reponse_MatrixResponse) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesReponse()[index];
 }
@@ -61,11 +52,11 @@ template<typename T> struct ReponseTraits {
   static const Reponse enum_value = Reponse_NONE;
 };
 
-template<> struct ReponseTraits<workpackage::response::ScalarResponse> {
+template<> struct ReponseTraits<ScalarResponse> {
   static const Reponse enum_value = Reponse_ScalarResponse;
 };
 
-template<> struct ReponseTraits<workpackage::response::MatrixResponse> {
+template<> struct ReponseTraits<MatrixResponse> {
   static const Reponse enum_value = Reponse_MatrixResponse;
 };
 
@@ -73,7 +64,6 @@ bool VerifyReponse(flatbuffers::Verifier &verifier, const void *obj, Reponse typ
 bool VerifyReponseVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types);
 
 struct ScalarResponse FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef ScalarResponseBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_RESPONSE = 4
   };
@@ -82,13 +72,12 @@ struct ScalarResponse FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<float>(verifier, VT_RESPONSE, 4) &&
+           VerifyField<float>(verifier, VT_RESPONSE) &&
            verifier.EndTable();
   }
 };
 
 struct ScalarResponseBuilder {
-  typedef ScalarResponse Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_response(float response) {
@@ -98,6 +87,7 @@ struct ScalarResponseBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  ScalarResponseBuilder &operator=(const ScalarResponseBuilder &);
   flatbuffers::Offset<ScalarResponse> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ScalarResponse>(end);
@@ -114,7 +104,6 @@ inline flatbuffers::Offset<ScalarResponse> CreateScalarResponse(
 }
 
 struct MatrixResponse FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef MatrixResponseBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_RESPONSE_TYPE = 4,
     VT_RESPONSE = 6
@@ -137,7 +126,7 @@ struct MatrixResponse FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint8_t>(verifier, VT_RESPONSE_TYPE, 1) &&
+           VerifyField<uint8_t>(verifier, VT_RESPONSE_TYPE) &&
            VerifyOffset(verifier, VT_RESPONSE) &&
            VerifyMatrix(verifier, response(), response_type()) &&
            verifier.EndTable();
@@ -157,7 +146,6 @@ template<> inline const workpackage::common::MatrixND *MatrixResponse::response_
 }
 
 struct MatrixResponseBuilder {
-  typedef MatrixResponse Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_response_type(workpackage::common::Matrix response_type) {
@@ -170,6 +158,7 @@ struct MatrixResponseBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  MatrixResponseBuilder &operator=(const MatrixResponseBuilder &);
   flatbuffers::Offset<MatrixResponse> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<MatrixResponse>(end);
@@ -193,14 +182,14 @@ inline bool VerifyReponse(flatbuffers::Verifier &verifier, const void *obj, Repo
       return true;
     }
     case Reponse_ScalarResponse: {
-      auto ptr = reinterpret_cast<const workpackage::response::ScalarResponse *>(obj);
+      auto ptr = reinterpret_cast<const ScalarResponse *>(obj);
       return verifier.VerifyTable(ptr);
     }
     case Reponse_MatrixResponse: {
-      auto ptr = reinterpret_cast<const workpackage::response::MatrixResponse *>(obj);
+      auto ptr = reinterpret_cast<const MatrixResponse *>(obj);
       return verifier.VerifyTable(ptr);
     }
-    default: return true;
+    default: return false;
   }
 }
 

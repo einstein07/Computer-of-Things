@@ -59,7 +59,7 @@ std::vector<float> mult(const workpackage::common::Matrix2D* a, const workpackag
 
 char* /**OperationResponse*/ processWorkPackages(/**const OperationRequest* request_*/char* data){
     //std::cout << "Converting byte array to operation request type pointer" << std::endl;
-    const OperationRequest* request_ = flatbuffers::GetRoot<workpackage::OperationRequest>(data);
+    const WorkpackageRequest* request_ = flatbuffers::GetRoot<workpackage::WorkpackageRequest>(data);
     //std::cout << "Done" << std::endl;
     long requestId_ = request_ -> id();
     Operation operation_ = request_ -> op_type();
@@ -88,7 +88,7 @@ char* /**OperationResponse*/ processWorkPackages(/**const OperationRequest* requ
     flatbuffers::FlatBufferBuilder builder(1024);
     if (request_ -> request_type() == request::Request::Request_BivariateScalarRequest){
         auto scalarResponse = CreateScalarResponse(builder, responseValue);
-        auto response_ = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_ScalarResponse , scalarResponse.Union());
+        auto response_ = CreateWorkpackageResponse(builder, requestId_,  Reponse::Reponse_ScalarResponse , scalarResponse.Union());
         builder.Finish(response_);
         response_length = builder.GetSize();
         //std::cout << "response length: " << response_length <<std::endl;
@@ -99,7 +99,7 @@ char* /**OperationResponse*/ processWorkPackages(/**const OperationRequest* requ
         auto elements = builder.CreateVector(elem);
         auto matrix2D = CreateMatrix2D(builder, 2, 2, elements);
         auto matrixResponse = CreateMatrixResponse(builder, Matrix::Matrix_Matrix2D, matrix2D.Union());
-        auto response_ = CreateOperationResponse(builder, requestId_, operation_,  Reponse::Reponse_MatrixResponse , matrixResponse.Union());
+        auto response_ = CreateWorkpackageResponse(builder, requestId_,  Reponse::Reponse_MatrixResponse , matrixResponse.Union());
         builder.Finish(response_);
         response_length = builder.GetSize();
         //std::cout << "response length: " << response_length <<std::endl;
