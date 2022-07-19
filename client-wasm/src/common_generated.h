@@ -6,26 +6,16 @@
 
 #include "flatbuffers/flatbuffers.h"
 
-// Ensure the included flatbuffers.h is the same version as when this file was
-// generated, otherwise it may not be compatible.
-static_assert(FLATBUFFERS_VERSION_MAJOR == 2 &&
-              FLATBUFFERS_VERSION_MINOR == 0 &&
-              FLATBUFFERS_VERSION_REVISION == 6,
-             "Non-compatible flatbuffers version included");
-
 namespace workpackage {
 namespace common {
 
 struct Matrix2D;
-struct Matrix2DBuilder;
 
 struct Matrix3D;
-struct Matrix3DBuilder;
 
 struct MatrixND;
-struct MatrixNDBuilder;
 
-enum Matrix : uint8_t {
+enum Matrix {
   Matrix_NONE = 0,
   Matrix_Matrix2D = 1,
   Matrix_Matrix3D = 2,
@@ -45,7 +35,7 @@ inline const Matrix (&EnumValuesMatrix())[4] {
 }
 
 inline const char * const *EnumNamesMatrix() {
-  static const char * const names[5] = {
+  static const char * const names[] = {
     "NONE",
     "Matrix2D",
     "Matrix3D",
@@ -56,7 +46,7 @@ inline const char * const *EnumNamesMatrix() {
 }
 
 inline const char *EnumNameMatrix(Matrix e) {
-  if (flatbuffers::IsOutRange(e, Matrix_NONE, Matrix_MatrixND)) return "";
+  if (e < Matrix_NONE || e > Matrix_MatrixND) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesMatrix()[index];
 }
@@ -65,15 +55,15 @@ template<typename T> struct MatrixTraits {
   static const Matrix enum_value = Matrix_NONE;
 };
 
-template<> struct MatrixTraits<workpackage::common::Matrix2D> {
+template<> struct MatrixTraits<Matrix2D> {
   static const Matrix enum_value = Matrix_Matrix2D;
 };
 
-template<> struct MatrixTraits<workpackage::common::Matrix3D> {
+template<> struct MatrixTraits<Matrix3D> {
   static const Matrix enum_value = Matrix_Matrix3D;
 };
 
-template<> struct MatrixTraits<workpackage::common::MatrixND> {
+template<> struct MatrixTraits<MatrixND> {
   static const Matrix enum_value = Matrix_MatrixND;
 };
 
@@ -81,7 +71,6 @@ bool VerifyMatrix(flatbuffers::Verifier &verifier, const void *obj, Matrix type)
 bool VerifyMatrixVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types);
 
 struct Matrix2D FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef Matrix2DBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_N_ROWS = 4,
     VT_N_COLS = 6,
@@ -98,8 +87,8 @@ struct Matrix2D FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_N_ROWS, 4) &&
-           VerifyField<int32_t>(verifier, VT_N_COLS, 4) &&
+           VerifyField<int32_t>(verifier, VT_N_ROWS) &&
+           VerifyField<int32_t>(verifier, VT_N_COLS) &&
            VerifyOffset(verifier, VT_ELEMENTS) &&
            verifier.VerifyVector(elements()) &&
            verifier.EndTable();
@@ -107,7 +96,6 @@ struct Matrix2D FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 };
 
 struct Matrix2DBuilder {
-  typedef Matrix2D Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_n_rows(int32_t n_rows) {
@@ -123,6 +111,7 @@ struct Matrix2DBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  Matrix2DBuilder &operator=(const Matrix2DBuilder &);
   flatbuffers::Offset<Matrix2D> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Matrix2D>(end);
@@ -156,7 +145,6 @@ inline flatbuffers::Offset<Matrix2D> CreateMatrix2DDirect(
 }
 
 struct Matrix3D FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef Matrix3DBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_NUM_ROWS = 4,
     VT_NUM_COLS = 6,
@@ -177,9 +165,9 @@ struct Matrix3D FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_NUM_ROWS, 4) &&
-           VerifyField<int32_t>(verifier, VT_NUM_COLS, 4) &&
-           VerifyField<int32_t>(verifier, VT_NUM_PAGES, 4) &&
+           VerifyField<int32_t>(verifier, VT_NUM_ROWS) &&
+           VerifyField<int32_t>(verifier, VT_NUM_COLS) &&
+           VerifyField<int32_t>(verifier, VT_NUM_PAGES) &&
            VerifyOffset(verifier, VT_ELEMENTS) &&
            verifier.VerifyVector(elements()) &&
            verifier.EndTable();
@@ -187,7 +175,6 @@ struct Matrix3D FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 };
 
 struct Matrix3DBuilder {
-  typedef Matrix3D Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_num_rows(int32_t num_rows) {
@@ -206,6 +193,7 @@ struct Matrix3DBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  Matrix3DBuilder &operator=(const Matrix3DBuilder &);
   flatbuffers::Offset<Matrix3D> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Matrix3D>(end);
@@ -243,7 +231,6 @@ inline flatbuffers::Offset<Matrix3D> CreateMatrix3DDirect(
 }
 
 struct MatrixND FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef MatrixNDBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_NUM_DIMS = 4,
     VT_DIM_SIZES = 6,
@@ -260,7 +247,7 @@ struct MatrixND FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_NUM_DIMS, 4) &&
+           VerifyField<int32_t>(verifier, VT_NUM_DIMS) &&
            VerifyOffset(verifier, VT_DIM_SIZES) &&
            verifier.VerifyVector(dim_sizes()) &&
            VerifyOffset(verifier, VT_ELEMENTS) &&
@@ -270,7 +257,6 @@ struct MatrixND FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 };
 
 struct MatrixNDBuilder {
-  typedef MatrixND Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_num_dims(int32_t num_dims) {
@@ -286,6 +272,7 @@ struct MatrixNDBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  MatrixNDBuilder &operator=(const MatrixNDBuilder &);
   flatbuffers::Offset<MatrixND> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<MatrixND>(end);
@@ -325,18 +312,18 @@ inline bool VerifyMatrix(flatbuffers::Verifier &verifier, const void *obj, Matri
       return true;
     }
     case Matrix_Matrix2D: {
-      auto ptr = reinterpret_cast<const workpackage::common::Matrix2D *>(obj);
+      auto ptr = reinterpret_cast<const Matrix2D *>(obj);
       return verifier.VerifyTable(ptr);
     }
     case Matrix_Matrix3D: {
-      auto ptr = reinterpret_cast<const workpackage::common::Matrix3D *>(obj);
+      auto ptr = reinterpret_cast<const Matrix3D *>(obj);
       return verifier.VerifyTable(ptr);
     }
     case Matrix_MatrixND: {
-      auto ptr = reinterpret_cast<const workpackage::common::MatrixND *>(obj);
+      auto ptr = reinterpret_cast<const MatrixND *>(obj);
       return verifier.VerifyTable(ptr);
     }
-    default: return true;
+    default: return false;
   }
 }
 

@@ -5,20 +5,22 @@ include "response.fbs";
 
 namespace workpackage;
 
-enum Operation : byte { 
-    ADD = 0, 
-    SUBTRACT, 
-    MULTIPLY,
+
+// The operation to be performed:
+// We use a ushort (16 bits), which allows 65536 different Operations to be defined for future use
+enum Operation : ushort { 
+    ADD = 0,
+    SUBTRACT = 1,
+    MULTIPLY = 2,
 }
 
-table OperationRequest {
+table WorkpackageRequest {
     id:long;
     op_type:Operation;
     request:request.Request;
 }
 
-table OperationResponse {
+table WorkpackageResponse {
     id:long;
-    op_type:Operation;
     response:response.Reponse;
 }

@@ -6,25 +6,17 @@
 
 #include "flatbuffers/flatbuffers.h"
 
-// Ensure the included flatbuffers.h is the same version as when this file was
-// generated, otherwise it may not be compatible.
-static_assert(FLATBUFFERS_VERSION_MAJOR == 2 &&
-              FLATBUFFERS_VERSION_MINOR == 0 &&
-              FLATBUFFERS_VERSION_REVISION == 6,
-             "Non-compatible flatbuffers version included");
-
+#include "common_generated.h"
 #include "request_generated.h"
 #include "response_generated.h"
 
 namespace workpackage {
 
-struct OperationRequest;
-struct OperationRequestBuilder;
+struct WorkpackageRequest;
 
-struct OperationResponse;
-struct OperationResponseBuilder;
+struct WorkpackageResponse;
 
-enum Operation : int8_t {
+enum Operation {
   Operation_ADD = 0,
   Operation_SUBTRACT = 1,
   Operation_MULTIPLY = 2,
@@ -42,7 +34,7 @@ inline const Operation (&EnumValuesOperation())[3] {
 }
 
 inline const char * const *EnumNamesOperation() {
-  static const char * const names[4] = {
+  static const char * const names[] = {
     "ADD",
     "SUBTRACT",
     "MULTIPLY",
@@ -52,13 +44,12 @@ inline const char * const *EnumNamesOperation() {
 }
 
 inline const char *EnumNameOperation(Operation e) {
-  if (flatbuffers::IsOutRange(e, Operation_ADD, Operation_MULTIPLY)) return "";
+  if (e < Operation_ADD || e > Operation_MULTIPLY) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesOperation()[index];
 }
 
-struct OperationRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef OperationRequestBuilder Builder;
+struct WorkpackageRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_ID = 4,
     VT_OP_TYPE = 6,
@@ -68,8 +59,8 @@ struct OperationRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   int64_t id() const {
     return GetField<int64_t>(VT_ID, 0);
   }
-  workpackage::Operation op_type() const {
-    return static_cast<workpackage::Operation>(GetField<int8_t>(VT_OP_TYPE, 0));
+  Operation op_type() const {
+    return static_cast<Operation>(GetField<uint16_t>(VT_OP_TYPE, 0));
   }
   workpackage::request::Request request_type() const {
     return static_cast<workpackage::request::Request>(GetField<uint8_t>(VT_REQUEST_TYPE, 0));
@@ -86,77 +77,72 @@ struct OperationRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int64_t>(verifier, VT_ID, 8) &&
-           VerifyField<int8_t>(verifier, VT_OP_TYPE, 1) &&
-           VerifyField<uint8_t>(verifier, VT_REQUEST_TYPE, 1) &&
+           VerifyField<int64_t>(verifier, VT_ID) &&
+           VerifyField<uint16_t>(verifier, VT_OP_TYPE) &&
+           VerifyField<uint8_t>(verifier, VT_REQUEST_TYPE) &&
            VerifyOffset(verifier, VT_REQUEST) &&
            VerifyRequest(verifier, request(), request_type()) &&
            verifier.EndTable();
   }
 };
 
-template<> inline const workpackage::request::BivariateScalarRequest *OperationRequest::request_as<workpackage::request::BivariateScalarRequest>() const {
+template<> inline const workpackage::request::BivariateScalarRequest *WorkpackageRequest::request_as<workpackage::request::BivariateScalarRequest>() const {
   return request_as_BivariateScalarRequest();
 }
 
-template<> inline const workpackage::request::BivariateMatrixRequest *OperationRequest::request_as<workpackage::request::BivariateMatrixRequest>() const {
+template<> inline const workpackage::request::BivariateMatrixRequest *WorkpackageRequest::request_as<workpackage::request::BivariateMatrixRequest>() const {
   return request_as_BivariateMatrixRequest();
 }
 
-struct OperationRequestBuilder {
-  typedef OperationRequest Table;
+struct WorkpackageRequestBuilder {
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_id(int64_t id) {
-    fbb_.AddElement<int64_t>(OperationRequest::VT_ID, id, 0);
+    fbb_.AddElement<int64_t>(WorkpackageRequest::VT_ID, id, 0);
   }
-  void add_op_type(workpackage::Operation op_type) {
-    fbb_.AddElement<int8_t>(OperationRequest::VT_OP_TYPE, static_cast<int8_t>(op_type), 0);
+  void add_op_type(Operation op_type) {
+    fbb_.AddElement<uint16_t>(WorkpackageRequest::VT_OP_TYPE, static_cast<uint16_t>(op_type), 0);
   }
   void add_request_type(workpackage::request::Request request_type) {
-    fbb_.AddElement<uint8_t>(OperationRequest::VT_REQUEST_TYPE, static_cast<uint8_t>(request_type), 0);
+    fbb_.AddElement<uint8_t>(WorkpackageRequest::VT_REQUEST_TYPE, static_cast<uint8_t>(request_type), 0);
   }
   void add_request(flatbuffers::Offset<void> request) {
-    fbb_.AddOffset(OperationRequest::VT_REQUEST, request);
+    fbb_.AddOffset(WorkpackageRequest::VT_REQUEST, request);
   }
-  explicit OperationRequestBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit WorkpackageRequestBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  flatbuffers::Offset<OperationRequest> Finish() {
+  WorkpackageRequestBuilder &operator=(const WorkpackageRequestBuilder &);
+  flatbuffers::Offset<WorkpackageRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<OperationRequest>(end);
+    auto o = flatbuffers::Offset<WorkpackageRequest>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<OperationRequest> CreateOperationRequest(
+inline flatbuffers::Offset<WorkpackageRequest> CreateWorkpackageRequest(
     flatbuffers::FlatBufferBuilder &_fbb,
     int64_t id = 0,
-    workpackage::Operation op_type = workpackage::Operation_ADD,
+    Operation op_type = Operation_ADD,
     workpackage::request::Request request_type = workpackage::request::Request_NONE,
     flatbuffers::Offset<void> request = 0) {
-  OperationRequestBuilder builder_(_fbb);
+  WorkpackageRequestBuilder builder_(_fbb);
   builder_.add_id(id);
   builder_.add_request(request);
-  builder_.add_request_type(request_type);
   builder_.add_op_type(op_type);
+  builder_.add_request_type(request_type);
   return builder_.Finish();
 }
 
-struct OperationResponse FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef OperationResponseBuilder Builder;
+struct WorkpackageResponse FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_ID = 4,
-    VT_OP_TYPE = 6,
-    VT_RESPONSE_TYPE = 8,
-    VT_RESPONSE = 10
+    VT_RESPONSE_TYPE = 6,
+    VT_RESPONSE = 8
   };
   int64_t id() const {
     return GetField<int64_t>(VT_ID, 0);
-  }
-  workpackage::Operation op_type() const {
-    return static_cast<workpackage::Operation>(GetField<int8_t>(VT_OP_TYPE, 0));
   }
   workpackage::response::Reponse response_type() const {
     return static_cast<workpackage::response::Reponse>(GetField<uint8_t>(VT_RESPONSE_TYPE, 0));
@@ -173,61 +159,55 @@ struct OperationResponse FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int64_t>(verifier, VT_ID, 8) &&
-           VerifyField<int8_t>(verifier, VT_OP_TYPE, 1) &&
-           VerifyField<uint8_t>(verifier, VT_RESPONSE_TYPE, 1) &&
+           VerifyField<int64_t>(verifier, VT_ID) &&
+           VerifyField<uint8_t>(verifier, VT_RESPONSE_TYPE) &&
            VerifyOffset(verifier, VT_RESPONSE) &&
            VerifyReponse(verifier, response(), response_type()) &&
            verifier.EndTable();
   }
 };
 
-template<> inline const workpackage::response::ScalarResponse *OperationResponse::response_as<workpackage::response::ScalarResponse>() const {
+template<> inline const workpackage::response::ScalarResponse *WorkpackageResponse::response_as<workpackage::response::ScalarResponse>() const {
   return response_as_ScalarResponse();
 }
 
-template<> inline const workpackage::response::MatrixResponse *OperationResponse::response_as<workpackage::response::MatrixResponse>() const {
+template<> inline const workpackage::response::MatrixResponse *WorkpackageResponse::response_as<workpackage::response::MatrixResponse>() const {
   return response_as_MatrixResponse();
 }
 
-struct OperationResponseBuilder {
-  typedef OperationResponse Table;
+struct WorkpackageResponseBuilder {
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_id(int64_t id) {
-    fbb_.AddElement<int64_t>(OperationResponse::VT_ID, id, 0);
-  }
-  void add_op_type(workpackage::Operation op_type) {
-    fbb_.AddElement<int8_t>(OperationResponse::VT_OP_TYPE, static_cast<int8_t>(op_type), 0);
+    fbb_.AddElement<int64_t>(WorkpackageResponse::VT_ID, id, 0);
   }
   void add_response_type(workpackage::response::Reponse response_type) {
-    fbb_.AddElement<uint8_t>(OperationResponse::VT_RESPONSE_TYPE, static_cast<uint8_t>(response_type), 0);
+    fbb_.AddElement<uint8_t>(WorkpackageResponse::VT_RESPONSE_TYPE, static_cast<uint8_t>(response_type), 0);
   }
   void add_response(flatbuffers::Offset<void> response) {
-    fbb_.AddOffset(OperationResponse::VT_RESPONSE, response);
+    fbb_.AddOffset(WorkpackageResponse::VT_RESPONSE, response);
   }
-  explicit OperationResponseBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit WorkpackageResponseBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  flatbuffers::Offset<OperationResponse> Finish() {
+  WorkpackageResponseBuilder &operator=(const WorkpackageResponseBuilder &);
+  flatbuffers::Offset<WorkpackageResponse> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<OperationResponse>(end);
+    auto o = flatbuffers::Offset<WorkpackageResponse>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<OperationResponse> CreateOperationResponse(
+inline flatbuffers::Offset<WorkpackageResponse> CreateWorkpackageResponse(
     flatbuffers::FlatBufferBuilder &_fbb,
     int64_t id = 0,
-    workpackage::Operation op_type = workpackage::Operation_ADD,
     workpackage::response::Reponse response_type = workpackage::response::Reponse_NONE,
     flatbuffers::Offset<void> response = 0) {
-  OperationResponseBuilder builder_(_fbb);
+  WorkpackageResponseBuilder builder_(_fbb);
   builder_.add_id(id);
   builder_.add_response(response);
   builder_.add_response_type(response_type);
-  builder_.add_op_type(op_type);
   return builder_.Finish();
 }
 

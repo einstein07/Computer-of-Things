@@ -6,25 +6,16 @@
 
 #include "flatbuffers/flatbuffers.h"
 
-// Ensure the included flatbuffers.h is the same version as when this file was
-// generated, otherwise it may not be compatible.
-static_assert(FLATBUFFERS_VERSION_MAJOR == 2 &&
-              FLATBUFFERS_VERSION_MINOR == 0 &&
-              FLATBUFFERS_VERSION_REVISION == 6,
-             "Non-compatible flatbuffers version included");
-
 #include "common_generated.h"
 
 namespace workpackage {
 namespace request {
 
 struct BivariateScalarRequest;
-struct BivariateScalarRequestBuilder;
 
 struct BivariateMatrixRequest;
-struct BivariateMatrixRequestBuilder;
 
-enum Request : uint8_t {
+enum Request {
   Request_NONE = 0,
   Request_BivariateScalarRequest = 1,
   Request_BivariateMatrixRequest = 2,
@@ -42,7 +33,7 @@ inline const Request (&EnumValuesRequest())[3] {
 }
 
 inline const char * const *EnumNamesRequest() {
-  static const char * const names[4] = {
+  static const char * const names[] = {
     "NONE",
     "BivariateScalarRequest",
     "BivariateMatrixRequest",
@@ -52,7 +43,7 @@ inline const char * const *EnumNamesRequest() {
 }
 
 inline const char *EnumNameRequest(Request e) {
-  if (flatbuffers::IsOutRange(e, Request_NONE, Request_BivariateMatrixRequest)) return "";
+  if (e < Request_NONE || e > Request_BivariateMatrixRequest) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesRequest()[index];
 }
@@ -61,11 +52,11 @@ template<typename T> struct RequestTraits {
   static const Request enum_value = Request_NONE;
 };
 
-template<> struct RequestTraits<workpackage::request::BivariateScalarRequest> {
+template<> struct RequestTraits<BivariateScalarRequest> {
   static const Request enum_value = Request_BivariateScalarRequest;
 };
 
-template<> struct RequestTraits<workpackage::request::BivariateMatrixRequest> {
+template<> struct RequestTraits<BivariateMatrixRequest> {
   static const Request enum_value = Request_BivariateMatrixRequest;
 };
 
@@ -73,7 +64,6 @@ bool VerifyRequest(flatbuffers::Verifier &verifier, const void *obj, Request typ
 bool VerifyRequestVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types);
 
 struct BivariateScalarRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef BivariateScalarRequestBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_A = 4,
     VT_B = 6
@@ -86,14 +76,13 @@ struct BivariateScalarRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Tab
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<float>(verifier, VT_A, 4) &&
-           VerifyField<float>(verifier, VT_B, 4) &&
+           VerifyField<float>(verifier, VT_A) &&
+           VerifyField<float>(verifier, VT_B) &&
            verifier.EndTable();
   }
 };
 
 struct BivariateScalarRequestBuilder {
-  typedef BivariateScalarRequest Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_a(float a) {
@@ -106,6 +95,7 @@ struct BivariateScalarRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  BivariateScalarRequestBuilder &operator=(const BivariateScalarRequestBuilder &);
   flatbuffers::Offset<BivariateScalarRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<BivariateScalarRequest>(end);
@@ -124,7 +114,6 @@ inline flatbuffers::Offset<BivariateScalarRequest> CreateBivariateScalarRequest(
 }
 
 struct BivariateMatrixRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef BivariateMatrixRequestBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_A_TYPE = 4,
     VT_A = 6,
@@ -165,10 +154,10 @@ struct BivariateMatrixRequest FLATBUFFERS_FINAL_CLASS : private flatbuffers::Tab
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint8_t>(verifier, VT_A_TYPE, 1) &&
+           VerifyField<uint8_t>(verifier, VT_A_TYPE) &&
            VerifyOffset(verifier, VT_A) &&
            VerifyMatrix(verifier, a(), a_type()) &&
-           VerifyField<uint8_t>(verifier, VT_B_TYPE, 1) &&
+           VerifyField<uint8_t>(verifier, VT_B_TYPE) &&
            VerifyOffset(verifier, VT_B) &&
            VerifyMatrix(verifier, b(), b_type()) &&
            verifier.EndTable();
@@ -200,7 +189,6 @@ template<> inline const workpackage::common::MatrixND *BivariateMatrixRequest::b
 }
 
 struct BivariateMatrixRequestBuilder {
-  typedef BivariateMatrixRequest Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_a_type(workpackage::common::Matrix a_type) {
@@ -219,6 +207,7 @@ struct BivariateMatrixRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  BivariateMatrixRequestBuilder &operator=(const BivariateMatrixRequestBuilder &);
   flatbuffers::Offset<BivariateMatrixRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<BivariateMatrixRequest>(end);
@@ -246,14 +235,14 @@ inline bool VerifyRequest(flatbuffers::Verifier &verifier, const void *obj, Requ
       return true;
     }
     case Request_BivariateScalarRequest: {
-      auto ptr = reinterpret_cast<const workpackage::request::BivariateScalarRequest *>(obj);
+      auto ptr = reinterpret_cast<const BivariateScalarRequest *>(obj);
       return verifier.VerifyTable(ptr);
     }
     case Request_BivariateMatrixRequest: {
-      auto ptr = reinterpret_cast<const workpackage::request::BivariateMatrixRequest *>(obj);
+      auto ptr = reinterpret_cast<const BivariateMatrixRequest *>(obj);
       return verifier.VerifyTable(ptr);
     }
-    default: return true;
+    default: return false;
   }
 }
 
