@@ -3,7 +3,7 @@ import random
 
 # our workpackage Python code
 from ..workpackage.common import Matrix2D
-from ..workpackage.OperationRequest import OperationRequest, OperationRequestAddId, OperationRequestAddOpType, OperationRequestAddRequest, OperationRequestAddRequestType, OperationRequestEnd, OperationRequestStart
+from ..workpackage.WorkpackageRequest import WorkpackageRequestAddId, WorkpackageRequestAddOpType, WorkpackageRequestAddRequest, WorkpackageRequestAddRequestType, WorkpackageRequestEnd, WorkpackageRequestStart
 from ..workpackage.Operation import Operation
 from ..workpackage.request import Request
 from ..workpackage.request import BivariateMatrixRequest
@@ -48,17 +48,17 @@ def createMatrixMultiplyRequest(n_rows: int, n_cols: int):
     bivar_request = BivariateMatrixRequest.BivariateMatrixRequestEnd(builder)
 
     # we start building the OperationRequest message
-    OperationRequestStart(builder)
-    OperationRequestAddId(builder, 1)
-    OperationRequestAddOpType(builder, Operation.MULTIPLY)
+    WorkpackageRequestStart(builder)
+    WorkpackageRequestAddId(builder, 1)
+    WorkpackageRequestAddOpType(builder, Operation.MULTIPLY)
     # the "request" field is a union, so we need to specify the union type and the union data
-    OperationRequestAddRequestType(builder, Request.Request().BivariateMatrixRequest)
-    OperationRequestAddRequest(builder, bivar_request)
+    WorkpackageRequestAddRequestType(builder, Request.Request().BivariateMatrixRequest)
+    WorkpackageRequestAddRequest(builder, bivar_request)
     
-    op_request = OperationRequestEnd(builder)
+    wp_request = WorkpackageRequestEnd(builder)
 
     # instruct the builder that our message is complete
-    builder.Finish(op_request)
+    builder.Finish(wp_request)
 
     serialized_mesg = builder.Output()
 

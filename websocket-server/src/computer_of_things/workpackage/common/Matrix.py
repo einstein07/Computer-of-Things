@@ -6,4 +6,5 @@ class Matrix(object):
     NONE = 0
     Matrix2D = 1
     Matrix3D = 2
+    MatrixND = 3
 
